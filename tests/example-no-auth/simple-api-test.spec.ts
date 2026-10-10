@@ -15,6 +15,7 @@ test.describe('GET /product/{id}', async () => {
     console.log('response body:', responseBody)
     // Check if the response status is 200
     expect(statusCode).toBe(StatusCodes.OK)
+
   })
 
   test('get product with correct id should receive code 404', async ({ request }) => {
