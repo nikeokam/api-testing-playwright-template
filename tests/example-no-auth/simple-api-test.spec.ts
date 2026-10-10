@@ -1,7 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { expect, test } from '@playwright/test'
 
-
 test.describe('GET /product/{id}', async () => {
 
   test('get product with correct id should receive code 200', async ({ request }) => {
@@ -24,7 +23,8 @@ test.describe('GET /product/{id}', async () => {
     const allProductBody = await allProductResponse.json()
     const oneProductRequestUrl: number = allProductBody.length
 
-    const oneProductResponse = await request.get('https://shop.tl-academy.ee/api/products/' + oneProductRequestUrl + 1,
+    const oneProductResponse = await request.get(
+      'https://shop.tl-academy.ee/api/products/' + oneProductRequestUrl + 1,
     )
 
     const oneProductBody = await oneProductResponse.json()
@@ -62,7 +62,6 @@ test.describe('GET /product/{id}', async () => {
     console.log('response body:', responseBody)
     expect(statusCode).toBe(StatusCodes.BAD_REQUEST)
   })
-
 })
 
 test.describe('POST /product/{id}', async () => {
@@ -133,7 +132,7 @@ test.describe('POST /product/{id}', async () => {
     const requestBody = {
       category: 'Fruit',
       price: 2.39,
-      quantity: 10
+      quantity: 10,
     }
 
     const response = await request.post('https://shop.tl-academy.ee/api/products', {
@@ -145,7 +144,4 @@ test.describe('POST /product/{id}', async () => {
     console.log('response status:', statusCode)
     expect(statusCode).toBe(StatusCodes.BAD_REQUEST)
   })
-
-
-
 })
