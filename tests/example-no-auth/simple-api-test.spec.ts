@@ -61,6 +61,16 @@ test.describe('GET /product/{id}', async () => {
     console.log('response body:', responseBody)
     expect(statusCode).toBe(StatusCodes.BAD_REQUEST)
   })
+
+  test('get product with 0 id number should receive code 400', async ({ request }) => {
+    // Build and send a GET request to the server
+    const response = await request.get('https://shop.tl-academy.ee/api/products/0')
+    const responseBody = await response.json()
+    const statusCode = response.status()
+
+    console.log('response body:', responseBody)
+    expect(statusCode).toBe(StatusCodes.BAD_REQUEST)
+  })
 })
 
 test.describe('POST /product/{id}', async () => {
