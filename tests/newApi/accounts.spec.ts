@@ -84,6 +84,8 @@ test(`TL-11-3 /api/account with valid data and all supported currencies: ${curre
   }
 })
 
+// Начало ДЗ
+
 test.describe('Task 1.1 | GET /api/accounts/{id} critical path', async () => {
   test('TL-11-4 GET /api/account with valid data', async ({ request }) => {
     const account = new AccountDTO('Test Owner')
