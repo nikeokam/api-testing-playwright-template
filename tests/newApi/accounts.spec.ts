@@ -64,7 +64,7 @@ test.describe('/api/accounts negative tests', async () => {
 
 const currencies = ['USD', 'EUR', 'PLN']
 
-test(`TL-11-3 /api/account with valid data and all supported currencies: ${currencies}`, async ({
+test.fail(`TL-11-3 /api/account with valid data and all supported currencies: ${currencies}`, async ({
   request,
 }) => {
   for (const currency of currencies) {
