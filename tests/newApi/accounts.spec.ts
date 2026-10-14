@@ -64,24 +64,25 @@ test.describe('/api/accounts negative tests', async () => {
 
 const currencies = ['USD', 'EUR', 'PLN']
 
-test.fail(`TL-11-3 /api/account with valid data and all supported currencies: ${currencies}`, async ({
-  request,
-}) => {
-  for (const currency of currencies) {
-    const account = new AccountDTO('Test Owner', currency)
-    const response = await request.post(baseUrl + '/api/accounts', {
-      headers: authHeader,
-      data: account,
-    })
+test.fail(
+  `TL-11-3 /api/account with valid data and all supported currencies: ${currencies}`,
+  async ({ request }) => {
+    for (const currency of currencies) {
+      const account = new AccountDTO('Test Owner', currency)
+      const response = await request.post(baseUrl + '/api/accounts', {
+        headers: authHeader,
+        data: account,
+      })
 
-    const respBody: CreateAccountResp = await response.json()
-    console.log(respBody)
-    expect.soft(response.status()).not.toBe(StatusCodes.FORBIDDEN)
-    expect.soft(response.status()).toBe(StatusCodes.CREATED)
-    expect.soft(respBody.owner).toBe(account.owner)
-    expect.soft(respBody.currency).toBe(account.currency)
-  }
-})
+      const respBody: CreateAccountResp = await response.json()
+      console.log(respBody)
+      expect.soft(response.status()).not.toBe(StatusCodes.FORBIDDEN)
+      expect.soft(response.status()).toBe(StatusCodes.CREATED)
+      expect.soft(respBody.owner).toBe(account.owner)
+      expect.soft(respBody.currency).toBe(account.currency)
+    }
+  },
+)
 
 test.describe('Task 1.1 | GET /api/accounts/{id} critical path', async () => {
   test('TL-11-4 GET /api/account with valid data', async ({ request }) => {
