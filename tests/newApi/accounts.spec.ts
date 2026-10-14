@@ -32,7 +32,6 @@ type CreateAccountErrorResp = {
   error: string
 }
 
-
 test.describe('/api/accounts negative tests', async () => {
   test('TL-11-1 POST /api/account with valid data', async ({ request }) => {
     const account = new AccountDTO('Test Owner')
@@ -110,8 +109,7 @@ test.describe('Task 1.1 | GET /api/accounts/{id} critical path', async () => {
     expect(response.status()).toBe(StatusCodes.UNAUTHORIZED)
   })
 })
-  test.describe('Task 1.2 | GET /api/accounts/{id} critical path', async () => {
-
+test.describe('Task 1.2 | GET /api/accounts/{id} critical path', async () => {
   test('TL-11-6 GET /api/account/{id} valid invoice', async ({ request }) => {
     const account = new AccountDTO('Test Owner')
     const response = await request.get(baseUrl + '/api/accounts/1', {
@@ -164,13 +162,11 @@ test.describe('Task 1.1 | GET /api/accounts/{id} critical path', async () => {
 })
 
 test.describe('Task 1.4 | POST /api/accounts critical path', async () => {
-  test('TL-11-10 POST api/accounts/{id}/deposit with valid data', async ({
-    request,
-  }) => {
+  test('TL-11-10 POST api/accounts/{id}/deposit with valid data', async ({ request }) => {
     const amount = 25.5
     const response = await request.post(baseUrl + '/api/accounts/1/deposit', {
       headers: authHeader,
-      data: {amount},
+      data: { amount },
     })
 
     const respBody: CreateAccountResp = await response.json()
@@ -191,7 +187,7 @@ test.describe('Task 1.4 | POST /api/accounts critical path', async () => {
   })
 
   test('TL-11-12 POST api/accounts/{id}/deposit with text amount', async ({ request }) => {
-    const amount = "10"
+    const amount = '10'
     const response = await request.post(baseUrl + '/api/accounts/1/deposit', {
       headers: authHeader,
       data: { amount },
@@ -202,7 +198,9 @@ test.describe('Task 1.4 | POST /api/accounts critical path', async () => {
     expect(response.status()).toBe(StatusCodes.BAD_REQUEST)
   })
 
-  test('TL-11-13 POST api/accounts/{id}/deposit amount with more than two decimals', async ({ request }) => {
+  test('TL-11-13 POST api/accounts/{id}/deposit amount with more than two decimals', async ({
+    request,
+  }) => {
     const amount = 1.234
     const response = await request.post(baseUrl + '/api/accounts/1/deposit', {
       headers: authHeader,
@@ -214,9 +212,7 @@ test.describe('Task 1.4 | POST /api/accounts critical path', async () => {
     expect(response.status()).toBe(StatusCodes.BAD_REQUEST)
   })
 
-  test('TL-11-14 POST api/accounts/{id}/deposit with invalid account', async ({
-    request,
-  }) => {
+  test('TL-11-14 POST api/accounts/{id}/deposit with invalid account', async ({ request }) => {
     const amount = 10
     const response = await request.post(baseUrl + '/api/accounts/999/deposit', {
       headers: authHeader,
@@ -228,4 +224,3 @@ test.describe('Task 1.4 | POST /api/accounts critical path', async () => {
     expect(response.status()).toBe(StatusCodes.NOT_FOUND)
   })
 })
-
