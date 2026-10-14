@@ -32,7 +32,7 @@ type CreateAccountErrorResp = {
   error: string
 }
 
-test.describe('/api/accounts negative tests', async () => {
+test.describe('/api/accounts negative tests', () => {
   test('TL-11-1 POST /api/account with valid data', async ({ request }) => {
     const account = new AccountDTO('Test Owner')
     const response = await request.post(baseUrl + '/api/accounts', {
@@ -86,7 +86,7 @@ test(`TL-11-3 /api/account with valid data and all supported currencies: ${curre
 
 // Начало ДЗ
 
-test.describe('Task 1.1 | GET /api/accounts/{id} critical path', async () => {
+test.describe('Task 1.1 | GET /api/accounts/{id} critical path', () => {
   test('TL-11-4 GET /api/account with valid data', async ({ request }) => {
     const account = new AccountDTO('Test Owner')
     const response = await request.get(baseUrl + '/api/accounts', {
@@ -112,7 +112,7 @@ test.describe('Task 1.1 | GET /api/accounts/{id} critical path', async () => {
     expect(response.status()).toBe(StatusCodes.UNAUTHORIZED)
   })
 })
-test.describe('Task 1.2 | GET /api/accounts/{id} critical path', async () => {
+test.describe('Task 1.2 | GET /api/accounts/{id} critical path', () => {
   test('TL-11-6 GET /api/account/{id} valid invoice', async ({ request }) => {
     const account = new AccountDTO('Test Owner')
     const response = await request.get(baseUrl + '/api/accounts/1', {
@@ -164,7 +164,7 @@ test.describe('Task 1.2 | GET /api/accounts/{id} critical path', async () => {
   })
 })
 
-test.describe('Task 1.4 | POST /api/accounts critical path', async () => {
+test.describe('Task 1.4 | POST /api/accounts critical path', () => {
   test('TL-11-10 POST api/accounts/{id}/deposit with valid data', async ({ request }) => {
     const amount = 25.5
     const response = await request.post(baseUrl + '/api/accounts/1/deposit', {

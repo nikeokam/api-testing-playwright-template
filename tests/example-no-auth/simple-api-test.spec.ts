@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { expect, test } from '@playwright/test'
 
-test.describe('GET /product/{id}', async () => {
+test.describe('GET /product/{id}', () => {
   test('get product with correct id should receive code 200', async ({ request }) => {
     // Build and send a GET request to the server
     const response = await request.get('https://shop.tl-academy.ee/api/products/1')
@@ -16,7 +16,7 @@ test.describe('GET /product/{id}', async () => {
     expect(statusCode).toBe(StatusCodes.OK)
   })
 
-  test('get product with correct id should receive code 404', async ({ request }) => {
+  test('get product with incorrect id should receive code 404', async ({ request }) => {
     // Build and send a GET request to the server
     const allProductResponse = await request.get('https://shop.tl-academy.ee/api/products')
     const allProductBody = await allProductResponse.json()
@@ -73,7 +73,7 @@ test.describe('GET /product/{id}', async () => {
   })
 })
 
-test.describe('POST /product/{id}', async () => {
+test.describe('POST /product/{id}', () => {
   test('post product with correct data should receive code 201', async ({ request }) => {
     // prepare request body
     const requestBody = {
