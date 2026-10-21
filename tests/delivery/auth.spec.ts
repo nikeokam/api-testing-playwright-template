@@ -2,11 +2,14 @@ import { expect, test } from '@playwright/test'
 import { Login } from '../../dto/login-dto'
 import { createOrder, fetchJwt } from '../../helpers/api-helper'
 import { StatusCodes } from 'http-status-codes'
+import { loginRequestBodySchema, TokenSchema } from '../../schema/LoginSchema'
+import { GetOrdersResponseSchema } from '../../schema/OrderSchema'
 
 let loginDto: Login
 export const baseUrl = 'https://backend.tallinn-learning.ee'
 export const loginEndpoint = '/login/student'
 export const ordersEndpoint = '/orders'
+export const statusEndpoint = '/status'
 
 test.describe('Authorization flow', () => {
   test.beforeAll(() => {
@@ -14,19 +17,17 @@ test.describe('Authorization flow', () => {
   })
 
   test('TL-12-1 should login and receive authorization token', async ({ request }) => {
-    //const token = await fetchJwt(request, loginDto)
-
     const user: Login = {
-      username: process.env.DL_USERNAME!,
+      username: process.env['DL_USERNAME']!,
       password: process.env.DL_PASSWORD!,
     }
-
+    const validatedUser: Login = loginRequestBodySchema.parse(user)
     const response = await request.post(baseUrl + loginEndpoint, {
-      data: user,
+      data: validatedUser,
     })
-
     const token = await response.text()
-    expect(token).toBeDefined()
+    const validatedToken = TokenSchema.parse(token)
+    expect(validatedToken).toBeDefined()
   })
 
   test('should create order', async ({ request }) => {
@@ -34,6 +35,7 @@ test.describe('Authorization flow', () => {
     const orderId = await createOrder(request, token)
     expect(orderId).toBeDefined()
   })
+
   test('should not create order', async ({ request }) => {
     const response = await request.post(baseUrl + ordersEndpoint, {
       data: {
@@ -51,6 +53,14 @@ test.describe('Authorization flow', () => {
     expect(response.status()).toBe(StatusCodes.UNAUTHORIZED)
   })
 
+  type Order = {
+    status: string
+    courierId: number | null
+    customerName: string
+    customerPhone: string
+    comment: string | null
+    id: number
+  }
   test('should get orders with authorization token', async ({ request }) => {
     const token = await fetchJwt(request, loginDto)
 
@@ -62,8 +72,45 @@ test.describe('Authorization flow', () => {
     })
 
     expect(response.status()).toBe(200)
-    const orders = await response.json()
+    const orders: Order[] = GetOrdersResponseSchema.parse(await response.json())
     console.log('Orders:', JSON.stringify(orders, null, 2))
     expect(orders).toBeTruthy()
+  })
+
+  //начало ДЗ
+
+  test('should check status PUT /orders/{id}/status, but returns 403 for student', async ({
+    request,
+  }) => {
+    const token = await fetchJwt(request, loginDto)
+    const orderId = await createOrder(request, token)
+    expect(orderId).toBeDefined()
+    console.log(orderId)
+
+    const response = await request.put(baseUrl + ordersEndpoint + '/' + orderId + statusEndpoint, {
+      headers: { Authorization: `Bearer ${token}` },
+      data: { status: 'OPEN' },
+    })
+
+    expect(response.status()).toBe(StatusCodes.FORBIDDEN)
+  })
+
+  test.fail('should create and delete order', async ({ request }) => {
+    //creates order
+    const token = await fetchJwt(request, loginDto)
+    const orderId = await createOrder(request, token)
+    expect(orderId).toBeDefined()
+
+    //deletes created order
+    const deleteResponse = await request.delete(baseUrl + ordersEndpoint + '/' + orderId, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    expect(deleteResponse.status()).toBe(StatusCodes.OK)
+
+    //checks that created order is deleted
+    const response = await request.get(baseUrl + ordersEndpoint + '/' + orderId, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    expect(response.status()).toBe(StatusCodes.NOT_FOUND)
   })
 })
