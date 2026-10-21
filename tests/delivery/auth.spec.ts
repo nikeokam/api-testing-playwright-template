@@ -5,7 +5,6 @@ import { StatusCodes } from 'http-status-codes'
 import { loginRequestBodySchema, TokenSchema } from '../../schema/LoginSchema'
 import { GetOrdersResponseSchema } from '../../schema/OrderSchema'
 
-
 let loginDto: Login
 export const baseUrl = 'https://backend.tallinn-learning.ee'
 export const loginEndpoint = '/login/student'
@@ -18,17 +17,16 @@ test.describe('Authorization flow', () => {
   })
 
   test('TL-12-1 should login and receive authorization token', async ({ request }) => {
-
     const user: Login = {
       username: process.env['DL_USERNAME']!,
       password: process.env.DL_PASSWORD!,
     }
-    const validatedUser: Login = loginRequestBodySchema.parse(user);
+    const validatedUser: Login = loginRequestBodySchema.parse(user)
     const response = await request.post(baseUrl + loginEndpoint, {
       data: validatedUser,
     })
     const token = await response.text()
-    const validatedToken= TokenSchema.parse(token)
+    const validatedToken = TokenSchema.parse(token)
     expect(validatedToken).toBeDefined()
   })
 
@@ -55,12 +53,12 @@ test.describe('Authorization flow', () => {
     expect(response.status()).toBe(StatusCodes.UNAUTHORIZED)
   })
 
-  type  Order = {
-    status: string,
-    courierId: number | null,
-    customerName: string,
-    customerPhone: string,
-    comment:string | null,
+  type Order = {
+    status: string
+    courierId: number | null
+    customerName: string
+    customerPhone: string
+    comment: string | null
     id: number
   }
   test('should get orders with authorization token', async ({ request }) => {
@@ -74,7 +72,7 @@ test.describe('Authorization flow', () => {
     })
 
     expect(response.status()).toBe(200)
-    const orders: Order[]  = GetOrdersResponseSchema.parse(await response.json());
+    const orders: Order[] = GetOrdersResponseSchema.parse(await response.json())
     console.log('Orders:', JSON.stringify(orders, null, 2))
     expect(orders).toBeTruthy()
   })
@@ -97,7 +95,7 @@ test.describe('Authorization flow', () => {
     expect(response.status()).toBe(StatusCodes.FORBIDDEN)
   })
 
-  test.fail('should create and delete order', async ({ request }) => {
+  test('should create and delete order', async ({ request }) => {
     //creates order
     const token = await fetchJwt(request, loginDto)
     const orderId = await createOrder(request, token)
@@ -115,5 +113,4 @@ test.describe('Authorization flow', () => {
     })
     expect(response.status()).toBe(StatusCodes.NOT_FOUND)
   })
-
 })
